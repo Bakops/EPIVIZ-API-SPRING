@@ -1,42 +1,111 @@
 package com.example.epivizappapi.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "data") // Correspond au nom de la table dans la base de données
 public class Data {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int total_cases;
-    private int total_deaths;
-    private int new_cases;
-    private int new_deaths;
+    @Column(name = "total_cases", nullable = false)
+    private int totalCases;
+
+    @Column(name = "total_deaths", nullable = false)
+    private int totalDeaths;
+
+    @Column(name = "new_cases", nullable = false)
+    private int newCases;
+
+    @Column(name = "new_deaths", nullable = false)
+    private int newDeaths;
 
     @ManyToOne
-    @JoinColumn(name = "id_localisation")
+    @JoinColumn(name = "id_localisation", nullable = false)
     private Localisation localisation;
 
     @ManyToOne
-    @JoinColumn(name = "id_pandemie")
+    @JoinColumn(name = "id_pandemie", nullable = false)
     private Pandemie pandemie;
 
     @ManyToOne
-    @JoinColumn(name = "id_calendrier")
+    @JoinColumn(name = "id_calendrier", nullable = false)
     private Calendrier calendrier;
 
     // Constructeur par défaut
     public Data() {}
 
-    // Constructeur avec paramètres
-    public Data(int total_cases, int total_deaths, int new_cases, int new_deaths,
-                Localisation localisation, Pandemie pandemie, Calendrier calendrier) {
-        this.total_cases = total_cases;
-        this.total_deaths = total_deaths;
-        this.new_cases = new_cases;
-        this.new_deaths = new_deaths;
+    // Getters et setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getTotalCases() {
+        return totalCases;
+    }
+
+    public void setTotalCases(int totalCases) {
+        this.totalCases = totalCases;
+    }
+
+    public int getTotalDeaths() {
+        return totalDeaths;
+    }
+
+    public void setTotalDeaths(int totalDeaths) {
+        this.totalDeaths = totalDeaths;
+    }
+
+    public int getNewCases() {
+        return newCases;
+    }
+
+    public void setNewCases(int newCases) {
+        this.newCases = newCases;
+    }
+
+    public int getNewDeaths() {
+        return newDeaths;
+    }
+
+    public void setNewDeaths(int newDeaths) {
+        this.newDeaths = newDeaths;
+    }
+
+    public Localisation getLocalisation() {
+        return localisation;
+    }
+
+    public void setLocalisation(Localisation localisation) {
         this.localisation = localisation;
+    }
+
+    public Pandemie getPandemie() {
+        return pandemie;
+    }
+
+    public void setPandemie(Pandemie pandemie) {
         this.pandemie = pandemie;
+    }
+
+    public Calendrier getCalendrier() {
+        return calendrier;
+    }
+
+    public void setCalendrier(Calendrier calendrier) {
         this.calendrier = calendrier;
     }
 }
