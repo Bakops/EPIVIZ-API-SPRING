@@ -2,6 +2,9 @@ package com.example.epivizappapi.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,31 +17,34 @@ import com.example.epivizappapi.model.Localisation;
 import com.example.epivizappapi.repository.LocalisationRepository;
 
 @RestController
-@RequestMapping("/api/localisations")
+@RequestMapping("/api/location")
 public class LocalisationController {
-    private final LocalisationRepository repository;
 
-    public LocalisationController(LocalisationRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private LocalisationRepository localisationRepository;
 
     @GetMapping
-    public List<Localisation> getAllLocalisations() {
-        return repository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Localisation getLocalisationById(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow();
+    public ResponseEntity<List<Localisation>> getAllLocations() {
+        try {
+            List<Localisation> localisations = localisationRepository.findAll();
+            return ResponseEntity.ok(localisations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping
     public Localisation createLocalisation(@RequestBody Localisation localisation) {
-        return repository.save(localisation);
+        return localisationRepository.save(localisation);
+    }
+
+    @GetMapping("/{id}")
+    public Localisation getLocalisationById(@PathVariable Long id) {
+        return localisationRepository.findById(id).orElseThrow(() -> new RuntimeException("Localisation introuvable"));
     }
 
     @DeleteMapping("/{id}")
     public void deleteLocalisation(@PathVariable Long id) {
-        repository.deleteById(id);
+        localisationRepository.deleteById(id);
     }
 }

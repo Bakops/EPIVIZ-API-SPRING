@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "localisation") // Correspond au nom de la table dans la base de données
+@Table(name = "location") // Correspond au nom de la table dans la base de données
 public class Localisation {
 
     @Id
@@ -24,6 +24,12 @@ public class Localisation {
 
     @Column(name = "continent", nullable = false)
     private String continent;
+
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
 
     @OneToMany(mappedBy = "localisation", cascade = CascadeType.ALL)
     private List<Data> data;
@@ -54,6 +60,22 @@ public class Localisation {
 
     public void setContinent(String continent) {
         this.continent = continent;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public List<Data> getData() {

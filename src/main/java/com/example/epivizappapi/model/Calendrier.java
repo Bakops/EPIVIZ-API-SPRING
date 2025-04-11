@@ -1,5 +1,6 @@
 package com.example.epivizappapi.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -12,15 +13,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "calendrier") // Correspond au nom de la table dans la base de données
+@Table(name = "calendar") // Correspond au nom de la table dans la base de données
 public class Calendrier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "date")
-    private int date;
+    @Column(name = "date_value", nullable = false)
+    private LocalDate date;
 
     @OneToMany(mappedBy = "calendrier", cascade = CascadeType.ALL)
     private List<Data> data;
@@ -37,11 +38,11 @@ public class Calendrier {
         this.id = id;
     }
 
-    public int getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(int date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

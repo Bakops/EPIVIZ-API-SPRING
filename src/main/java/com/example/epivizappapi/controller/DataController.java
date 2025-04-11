@@ -2,6 +2,7 @@ package com.example.epivizappapi.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,30 +17,27 @@ import com.example.epivizappapi.repository.DataRepository;
 @RestController
 @RequestMapping("/api/data")
 public class DataController {
-    private final DataRepository repository;
 
-    public DataController(DataRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private DataRepository dataRepository;
 
     @GetMapping
     public List<Data> getAllData() {
-        return repository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Data getDataById(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow();
+        return dataRepository.findAll();
     }
 
     @PostMapping
     public Data createData(@RequestBody Data data) {
-        return repository.save(data);
+        return dataRepository.save(data);
     }
 
+    @GetMapping("/{id}")
+    public Data getDataById(@PathVariable Long id) {
+        return dataRepository.findById(id).orElseThrow(() -> new RuntimeException("Donnée introuvable"));
+    }
 
     @DeleteMapping("/{id}")
     public void deleteData(@PathVariable Long id) {
-        repository.deleteById(id);
+        dataRepository.deleteById(id);
     }
 }

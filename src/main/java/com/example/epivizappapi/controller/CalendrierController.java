@@ -2,6 +2,7 @@ package com.example.epivizappapi.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,31 +15,29 @@ import com.example.epivizappapi.model.Calendrier;
 import com.example.epivizappapi.repository.CalendrierRepository;
 
 @RestController
-@RequestMapping("/api/calendriers")
+@RequestMapping("/api/calendar")
 public class CalendrierController {
-    private final CalendrierRepository repository;
 
-    public CalendrierController(CalendrierRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private CalendrierRepository calendrierRepository;
 
     @GetMapping
     public List<Calendrier> getAllCalendriers() {
-        return repository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Calendrier getCalendrierById(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow();
+        return calendrierRepository.findAll();
     }
 
     @PostMapping
     public Calendrier createCalendrier(@RequestBody Calendrier calendrier) {
-        return repository.save(calendrier);
+        return calendrierRepository.save(calendrier);
+    }
+
+    @GetMapping("/{id}")
+    public Calendrier getCalendrierById(@PathVariable Long id) {
+        return calendrierRepository.findById(id).orElseThrow(() -> new RuntimeException("Calendrier introuvable"));
     }
 
     @DeleteMapping("/{id}")
     public void deleteCalendrier(@PathVariable Long id) {
-        repository.deleteById(id);
+        calendrierRepository.deleteById(id);
     }
 }
