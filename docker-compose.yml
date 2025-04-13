@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: epivizdb
+      MYSQL_USER: epivizuser
+      MYSQL_PASSWORD: epivizpass
+    ports:
+      - "3306:3306"
+
+  api:
+    build:
+      context: .
+    container_name: epiviz-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb-container:3306/epivizdb
+      SPRING_DATASOURCE_USERNAME: epivizuser
+      SPRING_DATASOURCE_PASSWORD: epivizpass
+    depends_on:
+      - mariadb
