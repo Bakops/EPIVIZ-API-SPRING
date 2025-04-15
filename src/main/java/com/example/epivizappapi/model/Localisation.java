@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "location") // Correspond au nom de la table dans la base de données
+@Table(name = "location") 
 public class Localisation {
 
     @Id
@@ -34,10 +34,10 @@ public class Localisation {
     @OneToMany(mappedBy = "localisation", cascade = CascadeType.ALL)
     private List<Data> data;
 
-    // Constructeur par défaut
+ 
     public Localisation() {}
 
-    // Getters et setters
+
     public Long getId() {
         return id;
     }

@@ -3,6 +3,8 @@ package com.example.epivizappapi.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "calendar") // Correspond au nom de la table dans la base de données
+@Table(name = "calendar")
 public class Calendrier {
 
     @Id
@@ -23,13 +25,12 @@ public class Calendrier {
     @Column(name = "date_value", nullable = false)
     private LocalDate date;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "calendrier", cascade = CascadeType.ALL)
     private List<Data> data;
 
-    // Constructeur par défaut
     public Calendrier() {}
 
-    // Getters et setters
     public Long getId() {
         return id;
     }

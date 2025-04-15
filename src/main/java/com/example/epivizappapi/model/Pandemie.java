@@ -2,6 +2,7 @@ package com.example.epivizappapi.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -16,7 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "pandemie") 
+@Table(name = "pandemie")
 public class Pandemie {
 
     @Id
@@ -26,18 +27,17 @@ public class Pandemie {
     @Column(name = "nom_pandemie", nullable = false)
     private String type;
 
-    @JsonManagedReference // Gère la sérialisation de la relation avec Data
+    @JsonManagedReference
     @OneToMany(mappedBy = "pandemie", cascade = CascadeType.ALL)
     private List<Data> data;
 
     @ManyToOne
-    @JoinColumn(name = "id_calendar", nullable = false) // Clé étrangère vers la table "calendar"
+    @JoinColumn(name = "calendrier_id", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private Calendrier calendrier;
 
-    // Constructeur par défaut
     public Pandemie() {}
 
-    // Getters et setters
     public Long getId() {
         return id;
     }
