@@ -1,19 +1,15 @@
 package com.example.epivizappapi.model;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,19 +20,20 @@ public class Pandemie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nom_pandemie", nullable = false)
-    private String type;
+    @Column(name = "nom_pandemie")
+    private String nom;
+    
+    
+    @Column(name = "data")
+    private String data;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "pandemie", cascade = CascadeType.ALL)
-    private List<Data> data;
-
-    @ManyToOne
-    @JoinColumn(name = "calendrier_id", referencedColumnName = "id", nullable = false)
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "calendrier_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "pandemies"})
     private Calendrier calendrier;
 
-    public Pandemie() {}
+    public Pandemie() {
+    }
 
     public Long getId() {
         return id;
@@ -46,19 +43,19 @@ public class Pandemie {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getNom() {
+        return nom;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
-    public List<Data> getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(List<Data> data) {
+    public void setData(String data) {
         this.data = data;
     }
 

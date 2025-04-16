@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,61 +34,86 @@ public class PandemieController {
     public List<Map<String, Object>> getAllPandemies() {
         List<Pandemie> pandemies = pandemieRepository.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
-
+        
         for (Pandemie pandemie : pandemies) {
             Map<String, Object> pandemieMap = new HashMap<>();
             pandemieMap.put("id", pandemie.getId());
-            pandemieMap.put("type", pandemie.getType());
-        
-            pandemieMap.put("calendrier", null);
-
+            pandemieMap.put("nom_pandemie", pandemie.getNom());
+            pandemieMap.put("data", pandemie.getData());
+            
+            if (pandemie.getCalendrier() != null && pandemie.getCalendrier().getId() != null) {
+                Map<String, Object> calendrierMap = new HashMap<>();
+                calendrierMap.put("id", pandemie.getCalendrier().getId());
+                pandemieMap.put("calendrier", calendrierMap);
+            } else {
+                pandemieMap.put("calendrier", null);
+            }
+            
             result.add(pandemieMap);
         }
-
+        
+        System.out.println("Pandémies récupérées: " + result);  
         return result;
     }
 
     @PostMapping
-    public ResponseEntity<?> createPandemie(@RequestBody Pandemie pandemie) {
+    public ResponseEntity<Map<String, Object>> createPandemie(@RequestBody Pandemie pandemie) {
         try {
             if (pandemie.getCalendrier() != null && pandemie.getCalendrier().getId() != null) {
-                Optional<Calendrier> optionalCalendrier = calendrierRepository.findById(pandemie.getCalendrier().getId());
-                if (!optionalCalendrier.isPresent()) {
-                    return ResponseEntity.badRequest().body("Calendrier avec l'ID " + pandemie.getCalendrier().getId() + " n'existe pas.");
-                }
-                pandemie.setCalendrier(optionalCalendrier.get());
+                Calendrier calendrier = calendrierRepository.findById(pandemie.getCalendrier().getId())
+                        .orElse(null);
+                pandemie.setCalendrier(calendrier);
             } else {
                 pandemie.setCalendrier(null);
             }
-
+            
             Pandemie savedPandemie = pandemieRepository.save(pandemie);
-
+            
             Map<String, Object> response = new HashMap<>();
             response.put("id", savedPandemie.getId());
-            response.put("type", savedPandemie.getType());
+            response.put("nom", savedPandemie.getNom());
+            response.put("data", savedPandemie.getData());
+            
+            if (savedPandemie.getCalendrier() != null) {
+                Map<String, Object> calendrierMap = new HashMap<>();
+                calendrierMap.put("id", savedPandemie.getCalendrier().getId());
+                response.put("calendrier", calendrierMap);
+            } else {
+                response.put("calendrier", null);
+            }
+            
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erreur lors de la création de la pandémie: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Erreur lors de la création de la pandémie: " + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPandemieById(@PathVariable Long id) {
         try {
-            Optional<Pandemie> optionalPandemie = pandemieRepository.findById(id);
-            if (!optionalPandemie.isPresent()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            Pandemie pandemie = optionalPandemie.get();
+            Pandemie pandemie = pandemieRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Pandémie introuvable avec l'ID: " + id));
+            
             Map<String, Object> pandemieMap = new HashMap<>();
             pandemieMap.put("id", pandemie.getId());
-            pandemieMap.put("type", pandemie.getType());
-            pandemieMap.put("calendrier", null);
-
+            pandemieMap.put("nom", pandemie.getNom());
+            pandemieMap.put("data", pandemie.getData());
+            
+            if (pandemie.getCalendrier() != null) {
+                Map<String, Object> calendrierMap = new HashMap<>();
+                calendrierMap.put("id", pandemie.getCalendrier().getId());
+                pandemieMap.put("calendrier", calendrierMap);
+            } else {
+                pandemieMap.put("calendrier", null);
+            }
+            
             return ResponseEntity.ok(pandemieMap);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erreur lors de la récupération de la pandémie: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Erreur lors de la récupération de la pandémie: " + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
 
@@ -99,11 +123,30 @@ public class PandemieController {
             if (!pandemieRepository.existsById(id)) {
                 return ResponseEntity.notFound().build();
             }
-
+            
             pandemieRepository.deleteById(id);
-            return ResponseEntity.ok().body("Pandémie supprimée avec succès");
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Pandémie supprimée avec succès");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erreur lors de la suppression de la pandémie: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Erreur lors de la suppression de la pandémie: " + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+    }
+    
+    @GetMapping("/noms")
+    public List<Map<String, Object>> getPandemieNoms() {
+        List<Pandemie> pandemies = pandemieRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        for (Pandemie pandemie : pandemies) {
+            Map<String, Object> pandemieMap = new HashMap<>();
+            pandemieMap.put("id", pandemie.getId());
+            pandemieMap.put("nom", pandemie.getNom());
+            result.add(pandemieMap);
+        }
+        
+        return result;
     }
 }

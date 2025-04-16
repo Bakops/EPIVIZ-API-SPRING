@@ -1,7 +1,5 @@
 package com.example.epivizappapi.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +19,7 @@ public class CalendrierController {
     @Autowired
     private CalendrierRepository calendrierRepository;
 
-    @GetMapping
-    public List<Calendrier> getAllCalendriers() {
-        return calendrierRepository.findAll();
-    }
+    
 
     @PostMapping
     public Calendrier createCalendrier(@RequestBody Calendrier calendrier) {

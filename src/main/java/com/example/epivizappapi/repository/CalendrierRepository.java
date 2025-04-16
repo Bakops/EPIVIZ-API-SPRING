@@ -1,8 +1,10 @@
 package com.example.epivizappapi.repository;
-import com.example.epivizappapi.model.Calendrier;
-import org.springframework.data.jpa.repository.JpaRepository;
+
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import com.example.epivizappapi.model.Calendrier;
+
 @Repository
-public interface CalendrierRepository extends JpaRepository<Calendrier, Long> {
+public interface CalendrierRepository extends CrudRepository<Calendrier, Long> {
 }

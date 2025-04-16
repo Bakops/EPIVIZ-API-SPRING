@@ -2,6 +2,7 @@ package com.example.epivizappapi.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "data") // Correspond au nom de la table dans la base de données
+@Table(name = "data") 
 public class Data {
 
     @Id
@@ -37,14 +38,12 @@ public class Data {
     @JoinColumn(name = "id_pandemie", nullable = false)
     private Pandemie pandemie;
 
-    @ManyToOne
-    @JoinColumn(name = "id_calendrier", nullable = false)
-    private Calendrier calendrier;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendrier_id")
+    private Calendrier calendrier;  
 
-    // Constructeur par défaut
     public Data() {}
 
-    // Getters et setters
     public Long getId() {
         return id;
     }
