@@ -34,13 +34,13 @@ public class PandemieController {
     public List<Map<String, Object>> getAllPandemies() {
         List<Pandemie> pandemies = pandemieRepository.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
-        
+
         for (Pandemie pandemie : pandemies) {
             Map<String, Object> pandemieMap = new HashMap<>();
             pandemieMap.put("id", pandemie.getId());
-            pandemieMap.put("nom_pandemie", pandemie.getNom());
+            pandemieMap.put("type", pandemie.getNom());
             pandemieMap.put("data", pandemie.getData());
-            
+
             if (pandemie.getCalendrier() != null && pandemie.getCalendrier().getId() != null) {
                 Map<String, Object> calendrierMap = new HashMap<>();
                 calendrierMap.put("id", pandemie.getCalendrier().getId());
@@ -48,11 +48,11 @@ public class PandemieController {
             } else {
                 pandemieMap.put("calendrier", null);
             }
-            
+
             result.add(pandemieMap);
         }
-        
-        System.out.println("Pandémies récupérées: " + result);  
+
+        System.out.println("Pandémies récupérées: " + result);
         return result;
     }
 
@@ -66,14 +66,14 @@ public class PandemieController {
             } else {
                 pandemie.setCalendrier(null);
             }
-            
+
             Pandemie savedPandemie = pandemieRepository.save(pandemie);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("id", savedPandemie.getId());
-            response.put("nom", savedPandemie.getNom());
+            response.put("type", savedPandemie.getNom());
             response.put("data", savedPandemie.getData());
-            
+
             if (savedPandemie.getCalendrier() != null) {
                 Map<String, Object> calendrierMap = new HashMap<>();
                 calendrierMap.put("id", savedPandemie.getCalendrier().getId());
@@ -81,7 +81,7 @@ public class PandemieController {
             } else {
                 response.put("calendrier", null);
             }
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -95,20 +95,20 @@ public class PandemieController {
         try {
             Pandemie pandemie = pandemieRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Pandémie introuvable avec l'ID: " + id));
-            
+
             Map<String, Object> pandemieMap = new HashMap<>();
             pandemieMap.put("id", pandemie.getId());
-            pandemieMap.put("nom", pandemie.getNom());
+            pandemieMap.put("type", pandemie.getNom());
             pandemieMap.put("data", pandemie.getData());
-            
+
             if (pandemie.getCalendrier() != null) {
                 Map<String, Object> calendrierMap = new HashMap<>();
                 calendrierMap.put("id", pandemie.getCalendrier().getId());
-                pandemieMap.put("calendrier", calendrierMap);
+                pandemieMap.put("calendar", calendrierMap);
             } else {
-                pandemieMap.put("calendrier", null);
+                pandemieMap.put("calendar", null);
             }
-            
+
             return ResponseEntity.ok(pandemieMap);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -123,7 +123,7 @@ public class PandemieController {
             if (!pandemieRepository.existsById(id)) {
                 return ResponseEntity.notFound().build();
             }
-            
+
             pandemieRepository.deleteById(id);
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Pandémie supprimée avec succès");
@@ -134,19 +134,19 @@ public class PandemieController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
-    
+
     @GetMapping("/noms")
     public List<Map<String, Object>> getPandemieNoms() {
         List<Pandemie> pandemies = pandemieRepository.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
-        
+
         for (Pandemie pandemie : pandemies) {
             Map<String, Object> pandemieMap = new HashMap<>();
             pandemieMap.put("id", pandemie.getId());
             pandemieMap.put("nom", pandemie.getNom());
             result.add(pandemieMap);
         }
-        
+
         return result;
     }
 }

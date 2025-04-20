@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "data") 
+@Table(name = "data")
 public class Data {
 
     @Id
@@ -40,10 +40,9 @@ public class Data {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendrier_id")
-    private Calendrier calendrier;  
+    private Calendrier calendrier;
 
-    public Data() {}
-
+    // Getters and Setters
     public Long getId() {
         return id;
     }
