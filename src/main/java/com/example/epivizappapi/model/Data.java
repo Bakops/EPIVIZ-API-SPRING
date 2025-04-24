@@ -31,7 +31,7 @@ public class Data {
     private int newDeaths;
 
     @ManyToOne
-    @JoinColumn(name = "id_localisation", nullable = false)
+    @JoinColumn(name = "id_location", nullable = false)
     private Localisation localisation;
 
     @ManyToOne
@@ -39,7 +39,7 @@ public class Data {
     private Pandemie pandemie;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "calendrier_id")
+    @JoinColumn(name = "id_calendar", nullable = false)
     private Calendrier calendrier;
 
     // Getters and Setters

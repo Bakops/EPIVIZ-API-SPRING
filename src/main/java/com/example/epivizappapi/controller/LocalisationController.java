@@ -1,6 +1,9 @@
 package com.example.epivizappapi.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,12 +27,25 @@ public class LocalisationController {
     private LocalisationRepository localisationRepository;
 
     @GetMapping
-    public ResponseEntity<List<Localisation>> getAllLocations() {
+    public ResponseEntity<List<Map<String, Object>>> getAllLocations() {
         try {
-            List<Localisation> localisations = localisationRepository.findAll();
-            return ResponseEntity.ok(localisations);
+            List<Localisation> locations = localisationRepository.findAll();
+            List<Map<String, Object>> simplifiedLocations = new ArrayList<>();
+
+            for (Localisation loc : locations) {
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", loc.getId());
+                item.put("country", loc.getCountry());
+                item.put("continent", loc.getContinent());
+                item.put("latitude", loc.getLatitude());
+                item.put("longitude", loc.getLongitude());
+                // Ne pas inclure les données qui créent des références circulaires
+                simplifiedLocations.add(item);
+            }
+
+            return ResponseEntity.ok(simplifiedLocations);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

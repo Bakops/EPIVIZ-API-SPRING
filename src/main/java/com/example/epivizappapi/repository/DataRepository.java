@@ -13,4 +13,8 @@ public interface DataRepository extends JpaRepository<Data, Long> {
 
     @Query("SELECT d FROM Data d WHERE d.calendrier IS NOT NULL")
     List<Data> findAllWithValidCalendrier();
+
+    List<Data> findByPandemieId(Long pandemieId);
+
+    List<Data> findByPandemieIdAndLocalisationId(Long pandemieId, Long localisationId);
 }

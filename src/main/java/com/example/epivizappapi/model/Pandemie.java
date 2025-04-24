@@ -20,16 +20,15 @@ public class Pandemie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nom_pandemie")
+    @Column(name = "type")
     private String nom;
-    
-    
+
     @Column(name = "data")
     private String data;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "calendrier_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "pandemies"})
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "pandemies" })
     private Calendrier calendrier;
 
     public Pandemie() {
