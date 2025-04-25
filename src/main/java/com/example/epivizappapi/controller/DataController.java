@@ -1,6 +1,7 @@
 package com.example.epivizappapi.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.epivizappapi.dto.DataSummaryDTO;
 import com.example.epivizappapi.model.Calendrier;
 import com.example.epivizappapi.model.Data;
 import com.example.epivizappapi.repository.CalendrierRepository;
@@ -37,18 +39,28 @@ public class DataController {
     private DataService dataService;
 
     @GetMapping
-    public List<Data> getAllData() {
+    public List<DataSummaryDTO> getAllData() {
         List<Data> dataList = dataRepository.findAllWithValidCalendrier();
         logger.info("Données récupérées : {}", dataList);
-        return dataList;
+        return dataList.stream()
+                .map(data -> new DataSummaryDTO(
+                        data.getTotalCases(),
+                        data.getTotalDeaths(),
+                        data.getNewCases(),
+                        data.getNewDeaths()))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Data getDataById(@PathVariable Long id) {
+    public DataSummaryDTO getDataById(@PathVariable Long id) {
         Data data = dataRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donnée introuvable"));
         logger.info("Donnée récupérée par ID {} : {}", id, data);
-        return data;
+        return new DataSummaryDTO(
+                data.getTotalCases(),
+                data.getTotalDeaths(),
+                data.getNewCases(),
+                data.getNewDeaths());
     }
 
     @DeleteMapping("/{id}")
@@ -88,6 +100,56 @@ public class DataController {
         } catch (RuntimeException e) {
             logger.error("Erreur interne du serveur : {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    // Nouvel endpoint pour récupérer les données par pandémie et localisation
+    @GetMapping("/timeline/{pandemieId}/{locationId}")
+    public ResponseEntity<?> getTimelineByPandemieAndLocation(@PathVariable Long pandemieId,
+            @PathVariable Long locationId) {
+        try {
+            logger.info("Récupération des données pour la pandémie ID: {} et localisation ID: {}", pandemieId,
+                    locationId);
+
+            // Utiliser la méthode repository existante
+            List<Data> filteredData = dataRepository.findByPandemieIdAndLocalisationId(pandemieId, locationId);
+
+            logger.info("Données filtrées: {} éléments trouvés", filteredData.size());
+
+            List<DataSummaryDTO> summaryData = filteredData.stream()
+                    .map(data -> new DataSummaryDTO(
+                            data.getTotalCases(),
+                            data.getTotalDeaths(),
+                            data.getNewCases(),
+                            data.getNewDeaths()))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(summaryData);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la récupération des données timeline: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de la récupération des données: " + e.getMessage());
+        }
+    }
+
+    // Nouvel endpoint pour récupérer les données globales d'une pandémie
+    @GetMapping("/global/{pandemieId}")
+    public ResponseEntity<?> getGlobalDataByPandemie(@PathVariable Long pandemieId) {
+        try {
+            logger.info("Récupération des données globales pour la pandémie ID: {}", pandemieId);
+
+            // Utiliser la méthode repository existante
+            List<Data> filteredData = dataRepository.findByPandemieId(pandemieId);
+
+            logger.info("Données globales: {} éléments trouvés", filteredData.size());
+
+            DataSummaryDTO summaryData = dataService.calculateTotalsByPandemie(false).get(pandemieId);
+
+            return ResponseEntity.ok(summaryData);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la récupération des données globales: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de la récupération des données: " + e.getMessage());
         }
     }
 }
