@@ -1,5 +1,6 @@
 package com.example.epivizappapi.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,5 +42,15 @@ public class Calendrier {
 
     public void setPandemies(List<Pandemie> pandemies) {
         this.pandemies = pandemies;
+    }
+
+    private LocalDate date; // Assuming the date field exists and is of type LocalDate
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

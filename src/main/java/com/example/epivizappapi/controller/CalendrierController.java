@@ -19,8 +19,6 @@ public class CalendrierController {
     @Autowired
     private CalendrierRepository calendrierRepository;
 
-    
-
     @PostMapping
     public Calendrier createCalendrier(@RequestBody Calendrier calendrier) {
         return calendrierRepository.save(calendrier);

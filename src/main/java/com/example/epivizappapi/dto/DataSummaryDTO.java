@@ -1,14 +1,5 @@
 package com.example.epivizappapi.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class DataSummaryDTO {
     private Long totalCases;
     private Long totalDeaths;
