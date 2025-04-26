@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.epivizappapi.dto.DataSummaryDTO;
 import com.example.epivizappapi.model.Data;
 import com.example.epivizappapi.repository.CalendrierRepository;
 import com.example.epivizappapi.repository.DataRepository;
@@ -35,36 +36,33 @@ public class DataService {
                 return savedData;
         }
 
-        public Map<String, Long> calculateTotals() {
+        public DataSummaryDTO calculateTotals() {
                 return calculateTotals(false);
         }
 
-        public Map<String, Long> calculateTotals(boolean filterZeroValues) {
-                Map<String, Long> totals = new HashMap<>();
+        public DataSummaryDTO calculateTotals(boolean filterZeroValues) {
                 List<Data> allData = filterZeroValues ? getFilteredData() : dataRepository.findAll();
 
                 long totalCases = allData.stream()
                                 .mapToLong(Data::getTotalCases)
                                 .sum();
-                totals.put("totalCases", totalCases);
 
                 long totalDeaths = allData.stream()
                                 .mapToLong(Data::getTotalDeaths)
                                 .sum();
-                totals.put("totalDeaths", totalDeaths);
 
                 long newCases = allData.stream()
                                 .mapToLong(Data::getNewCases)
                                 .sum();
-                totals.put("newCases", newCases);
 
                 long newDeaths = allData.stream()
                                 .mapToLong(Data::getNewDeaths)
                                 .sum();
-                totals.put("newDeaths", newDeaths);
 
-                logger.info("Calculated totals: {}", totals);
-                return totals;
+                logger.info("Calculated totals: totalCases={}, totalDeaths={}, newCases={}, newDeaths={}",
+                                totalCases, totalDeaths, newCases, newDeaths);
+
+                return new DataSummaryDTO(totalCases, totalDeaths, newCases, newDeaths);
         }
 
         public List<Data> getFilteredData() {
@@ -128,71 +126,62 @@ public class DataService {
                 return dataList;
         }
 
-        public Map<Long, Map<String, Long>> calculateTotalsByLocalisation() {
+        public Map<Long, DataSummaryDTO> calculateTotalsByLocalisation() {
                 return calculateTotalsByLocalisation(false);
         }
 
-        public Map<Long, Map<String, Long>> calculateTotalsByLocalisation(boolean filterZeroValues) {
-                Map<Long, Map<String, Long>> totalsByLocalisation = new HashMap<>();
+        public Map<Long, DataSummaryDTO> calculateTotalsByLocalisation(boolean filterZeroValues) {
+                Map<Long, DataSummaryDTO> totalsByLocalisation = new HashMap<>();
                 List<Long> localisationIds = getAllLocalisationIds();
                 for (Long locId : localisationIds) {
                         List<Data> localisationData = getDataByLocalisation(locId, filterZeroValues);
                         if (filterZeroValues && localisationData.isEmpty()) {
                                 continue;
                         }
-                        Map<String, Long> localisationTotals = new HashMap<>();
                         long totalCases = localisationData.stream()
                                         .mapToLong(Data::getTotalCases)
                                         .sum();
-                        localisationTotals.put("totalCases", totalCases);
                         long totalDeaths = localisationData.stream()
                                         .mapToLong(Data::getTotalDeaths)
                                         .sum();
-                        localisationTotals.put("totalDeaths", totalDeaths);
                         long newCases = localisationData.stream()
                                         .mapToLong(Data::getNewCases)
                                         .sum();
-                        localisationTotals.put("newCases", newCases);
                         long newDeaths = localisationData.stream()
                                         .mapToLong(Data::getNewDeaths)
                                         .sum();
-                        localisationTotals.put("newDeaths", newDeaths);
-                        totalsByLocalisation.put(locId, localisationTotals);
+                        totalsByLocalisation.put(locId,
+                                        new DataSummaryDTO(totalCases, totalDeaths, newCases, newDeaths));
                 }
                 logger.info("Calculated totals by localisation: {}", totalsByLocalisation);
                 return totalsByLocalisation;
         }
 
-        public Map<Long, Map<String, Long>> calculateTotalsByPandemie() {
+        public Map<Long, DataSummaryDTO> calculateTotalsByPandemie() {
                 return calculateTotalsByPandemie(false);
         }
 
-        public Map<Long, Map<String, Long>> calculateTotalsByPandemie(boolean filterZeroValues) {
-                Map<Long, Map<String, Long>> totalsByPandemie = new HashMap<>();
+        public Map<Long, DataSummaryDTO> calculateTotalsByPandemie(boolean filterZeroValues) {
+                Map<Long, DataSummaryDTO> totalsByPandemie = new HashMap<>();
                 List<Long> pandemieIds = getAllPandemieIds();
                 for (Long panId : pandemieIds) {
                         List<Data> pandemieData = getDataByPandemie(panId, filterZeroValues);
                         if (filterZeroValues && pandemieData.isEmpty()) {
                                 continue;
                         }
-                        Map<String, Long> pandemieTotals = new HashMap<>();
                         long totalCases = pandemieData.stream()
                                         .mapToLong(Data::getTotalCases)
                                         .sum();
-                        pandemieTotals.put("totalCases", totalCases);
                         long totalDeaths = pandemieData.stream()
                                         .mapToLong(Data::getTotalDeaths)
                                         .sum();
-                        pandemieTotals.put("totalDeaths", totalDeaths);
                         long newCases = pandemieData.stream()
                                         .mapToLong(Data::getNewCases)
                                         .sum();
-                        pandemieTotals.put("newCases", newCases);
                         long newDeaths = pandemieData.stream()
                                         .mapToLong(Data::getNewDeaths)
                                         .sum();
-                        pandemieTotals.put("newDeaths", newDeaths);
-                        totalsByPandemie.put(panId, pandemieTotals);
+                        totalsByPandemie.put(panId, new DataSummaryDTO(totalCases, totalDeaths, newCases, newDeaths));
                 }
                 logger.info("Calculated totals by pandemie: {}", totalsByPandemie);
                 return totalsByPandemie;
