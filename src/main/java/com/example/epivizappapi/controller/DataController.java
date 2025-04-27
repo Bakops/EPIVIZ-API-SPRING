@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.epivizappapi.dto.DataDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ import com.example.epivizappapi.model.Calendrier;
 import com.example.epivizappapi.model.Data;
 import com.example.epivizappapi.repository.CalendrierRepository;
 import com.example.epivizappapi.repository.DataRepository;
+import com.example.epivizappapi.model.*;
+import com.example.epivizappapi.repository.*;
 import com.example.epivizappapi.services.DataService;
 
 @RestController
@@ -39,19 +42,27 @@ public class DataController {
     private CalendrierRepository calendrierRepository;
 
     @Autowired
+    private LocalisationRepository localisationRepository;
+
+    @Autowired
     private DataService dataService;
 
     @GetMapping
-    public List<DataSummaryDTO> getAllData() {
+    public List<DataDTO> getAllData() {
         List<Data> dataList = dataRepository.findAllWithValidCalendrier();
         logger.info("Données récupérées : {}", dataList);
         return dataList.stream()
-                .map(data -> new DataSummaryDTO(
+                .map(data -> new DataDTO(
+                        data.getId(),
                         data.getTotalCases(),
                         data.getTotalDeaths(),
                         data.getNewCases(),
-                        data.getNewDeaths()))
-                .collect(Collectors.toList());
+                        data.getNewDeaths(),
+                        data.getLocalisation() != null ? data.getLocalisation().getId() : null,
+                        data.getPandemie() != null ? data.getPandemie().getId() : null,
+                        data.getCalendrier() != null ? data.getCalendrier().getId() : null
+                ))
+                .toList();
     }
 
     @GetMapping("/{id}")

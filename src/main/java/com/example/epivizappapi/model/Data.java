@@ -19,16 +19,16 @@ public class Data {
     private Long id;
 
     @Column(name = "total_cases", nullable = false)
-    private int totalCases;
+    private Integer totalCases;
 
     @Column(name = "total_deaths", nullable = false)
-    private int totalDeaths;
+    private Integer totalDeaths;
 
     @Column(name = "new_cases", nullable = false)
-    private int newCases;
+    private Integer newCases;
 
     @Column(name = "new_deaths", nullable = false)
-    private int newDeaths;
+    private Integer newDeaths;
 
     @ManyToOne
     @JoinColumn(name = "id_location", nullable = false)
@@ -51,35 +51,35 @@ public class Data {
         this.id = id;
     }
 
-    public int getTotalCases() {
+    public Integer getTotalCases() {
         return totalCases;
     }
 
-    public void setTotalCases(int totalCases) {
+    public void setTotalCases(Integer totalCases) {
         this.totalCases = totalCases;
     }
 
-    public int getTotalDeaths() {
+    public Integer getTotalDeaths() {
         return totalDeaths;
     }
 
-    public void setTotalDeaths(int totalDeaths) {
+    public void setTotalDeaths(Integer totalDeaths) {
         this.totalDeaths = totalDeaths;
     }
 
-    public int getNewCases() {
+    public Integer getNewCases() {
         return newCases;
     }
 
-    public void setNewCases(int newCases) {
+    public void setNewCases(Integer newCases) {
         this.newCases = newCases;
     }
 
-    public int getNewDeaths() {
+    public Integer getNewDeaths() {
         return newDeaths;
     }
 
-    public void setNewDeaths(int newDeaths) {
+    public void setNewDeaths(Integer newDeaths) {
         this.newDeaths = newDeaths;
     }
 
