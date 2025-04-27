@@ -2,16 +2,12 @@ package com.example.epivizappapi.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "calendar")
@@ -20,6 +16,9 @@ public class Calendrier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "date_value", nullable = false)
+    private LocalDate dateValue;
 
     @OneToMany(mappedBy = "calendrier")
     @JsonIgnoreProperties("calendrier")
@@ -44,6 +43,7 @@ public class Calendrier {
         this.pandemies = pandemies;
     }
 
+<<<<<<< HEAD
     private LocalDate date; // Assuming the date field exists and is of type LocalDate
 
     public LocalDate getDate() {
@@ -52,5 +52,13 @@ public class Calendrier {
 
     public void setDate(LocalDate date) {
         this.date = date;
+=======
+    public LocalDate getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(LocalDate dateValue) {
+        this.dateValue = dateValue;
+>>>>>>> a582667b8d01cab633de62404342084c6e77a940
     }
 }

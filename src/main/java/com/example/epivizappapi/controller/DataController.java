@@ -51,6 +51,7 @@ public class DataController {
     public List<DataDTO> getAllData() {
         List<Data> dataList = dataRepository.findAllWithValidCalendrier();
         logger.info("Données récupérées : {}", dataList);
+
         return dataList.stream()
                 .map(data -> new DataDTO(
                         data.getId(),
@@ -60,7 +61,8 @@ public class DataController {
                         data.getNewDeaths(),
                         data.getLocalisation() != null ? data.getLocalisation().getId() : null,
                         data.getPandemie() != null ? data.getPandemie().getId() : null,
-                        data.getCalendrier() != null ? data.getCalendrier().getId() : null
+                        data.getCalendrier() != null ? data.getCalendrier().getId() : null,
+                        data.getCalendrier() != null ? data.getCalendrier().getDateValue() : null
                 ))
                 .toList();
     }

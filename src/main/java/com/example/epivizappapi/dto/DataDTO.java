@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDate;
+
 @NoArgsConstructor
 public class DataDTO {
     private Long id;
@@ -16,10 +19,11 @@ public class DataDTO {
     private Long idLocation;
     private Long idPandemic;
     private Long idCalendar;
+    private LocalDate dateValue;
 
 
     public DataDTO(Long id, Integer totalCases, Integer totalDeaths, Integer newCases, Integer newDeaths,
-                   Long idLocalisation, Long idPandemie, Long idCalendrier) {
+                   Long idLocalisation, Long idPandemie, Long idCalendrier, LocalDate dateValue) {
         this.id = id;
         this.totalCases = totalCases;
         this.totalDeaths = totalDeaths;
@@ -28,6 +32,8 @@ public class DataDTO {
         this.idLocation = idLocalisation;
         this.idPandemic = idPandemie;
         this.idCalendar = idCalendrier;
+        this.dateValue = dateValue;
+
     }
 
     public Data toEntity(Localisation localisation, Pandemie pandemie, Calendrier calendrier) {
@@ -105,5 +111,13 @@ public class DataDTO {
 
     public void setIdCalendar(Long idCalendar) {
         this.idCalendar = idCalendar;
+    }
+
+    public LocalDate getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(LocalDate dateValue) {
+        this.dateValue = dateValue;
     }
 }
