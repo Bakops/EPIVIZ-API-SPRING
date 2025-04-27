@@ -1,9 +1,6 @@
 package com.example.epivizappapi.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.example.epivizappapi.dto.DataDTO;
@@ -148,46 +145,22 @@ public class DataController {
         }
     }
 
+    // Nouvel endpoint pour récupérer les données globales d'une pandémie
     @GetMapping("/global/{pandemieId}")
     public ResponseEntity<?> getGlobalDataByPandemie(@PathVariable Long pandemieId) {
         try {
+            logger.info("Récupération des données globales pour la pandémie ID: {}", pandemieId);
+
+            // Utiliser la méthode repository existante
             List<Data> filteredData = dataRepository.findByPandemieId(pandemieId);
 
-            // Calcul des totaux
-            int totalCases = 0;
-            int totalDeaths = 0;
-            int newCases = 0;
-            int newDeaths = 0;
+            logger.info("Données globales: {} éléments trouvés", filteredData.size());
 
-            // Liste pour la timeline
-            List<Map<String, Object>> timeline = new ArrayList<>();
+            DataSummaryDTO summaryData = dataService.calculateTotalsByPandemie(false).get(pandemieId);
 
-            for (Data data : filteredData) {
-                totalCases += data.getTotalCases();
-                totalDeaths += data.getTotalDeaths();
-                newCases += data.getNewCases();
-                newDeaths += data.getNewDeaths();
-
-                // Création d'une entrée timeline
-                Map<String, Object> timelineEntry = new HashMap<>();
-                timelineEntry.put("date", data.getCalendrier().getDate());
-                timelineEntry.put("cas_confirmes", data.getTotalCases());
-                timelineEntry.put("deces", data.getTotalDeaths());
-                timelineEntry.put("new_cases", data.getNewCases());
-                timelineEntry.put("new_deaths", data.getNewDeaths());
-
-                timeline.add(timelineEntry);
-            }
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("cas_confirmes", totalCases);
-            response.put("deces", totalDeaths);
-            response.put("new_cases", newCases);
-            response.put("new_deaths", newDeaths);
-            response.put("timeline", timeline);
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(summaryData);
         } catch (Exception e) {
+            logger.error("Erreur lors de la récupération des données globales: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur lors de la récupération des données: " + e.getMessage());
         }
