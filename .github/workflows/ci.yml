@@ -32,7 +32,7 @@ jobs:
           ./mvnw clean package
 
       - name: Run Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@v0.15.0
+        uses: aquasecurity/trivy-action@v0.30.0
         with:
           scan-type: "fs"
           severity: "HIGH,CRITICAL"
