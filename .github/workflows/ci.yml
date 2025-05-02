@@ -46,6 +46,7 @@ jobs:
           args: >
             -Dsonar.projectKey=Bakops_EPIVIZ-API-SPRING
             -Dsonar.organization=bakops
+            -Dsonar.java.binaries=target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
