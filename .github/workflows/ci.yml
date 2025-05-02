@@ -43,8 +43,10 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
         with:
-          entryPoint: '/bin/bash'
-          args: '-Dsonar.projectKey=Bakops_EPIVIZ-API-SPRING -Dsonar.organization=bakops -Dsonar.login=${{ secrets.SONAR_TOKEN }}'
+          projectKey: Bakops_EPIVIZ-API-SPRING
+          organization: bakops
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
